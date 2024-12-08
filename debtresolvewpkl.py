@@ -1,4 +1,4 @@
-# Debt Reset Calculator
+# Debt Reset Calculator (FOR MULTIPLE DEBTS)
  
 ############################################
 ##                                        ##
@@ -79,7 +79,8 @@ def MaxFirst(maxdebtpays, maxdgoal, save):
     aprsorted = []
     listdebtmax = DEBTLIST.copy()
     maxday = DAY
- 
+    balance = 0
+
     # Highest balance first
     for i in range(len(listdebtmax)):
         maximum = max(listdebtmax)
@@ -121,6 +122,7 @@ def LeastFirst(leastdebtpays, leastdgoal, save):
     aprsorted = []
     listdebtmin = DEBTLIST.copy()
     leastday = DAY
+    balance = 0
 
     # Lowest balance first
     for i in range(len(listdebtmin)):
@@ -162,7 +164,8 @@ def EvenSpread(evendebtpays, evendgoal, save):
     evenlistdebt = DEBTLIST.copy()
     d = 0
     evenday = DAY
-
+    balance = 0
+    
     # Avoid division by zero and divide by positive values of evenlistdebt
     nonzeroes = len(evenlistdebt)
     while (sum(evenlistdebt) > evendgoal):
