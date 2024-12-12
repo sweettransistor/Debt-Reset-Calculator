@@ -69,10 +69,10 @@ def goals():
     #Remainder = savings payment
     savingspayment = payment - debtpayment
 
-    return goaldebt, goalsavings, currentsavings, debtpayment, savingspayment
+    return goaldebt, goalsavings, currentsavings, debtpayment, savingspayment, payment
 
 # Payoff maximum account balance first strategy
-def MaxFirst(maxdebtpays, maxdgoal, save):
+def MaxFirst(maxdebtpays, maxdgoal, save, maxmaxpayment):
     i = 0
     d = 0
     maxsorted = []
@@ -107,6 +107,8 @@ def MaxFirst(maxdebtpays, maxdgoal, save):
         # Calculate balance for savings reached day
         if maxday == save:
             balance = sum(maxsorted)
+            # If savings is met, contribution is max contribution.
+            maxdebtpays = maxmaxpayment
         for i in range(len(maxsorted)):
             if maxsorted[i] > 0:
                 maxsorted[i] += (maxsorted[i] * aprsorted[i] / 100 / 12)
@@ -115,7 +117,7 @@ def MaxFirst(maxdebtpays, maxdgoal, save):
     return maxday, balance
         
 # Payoff smallest account balance first strategy        
-def LeastFirst(leastdebtpays, leastdgoal, save):
+def LeastFirst(leastdebtpays, leastdgoal, save, leastleastpayment):
     i = 0
     d = 0
     minsorted = []
@@ -152,6 +154,9 @@ def LeastFirst(leastdebtpays, leastdgoal, save):
         # Calculate balance for savings reached day
         if leastday == save:
             balance = sum(minsorted)
+            # If savings is met, contribution is max contribution.
+            leastdebtpays = leastleastpayment
+
         for i in range(len(minsorted)):
             if minsorted[i] > 0:
                 minsorted[i] += (minsorted[i] * aprsorted[i] / 100 / 12)
@@ -160,7 +165,7 @@ def LeastFirst(leastdebtpays, leastdgoal, save):
     return leastday, balance
 
 # Payoff in even amounts spread over all accounts
-def EvenSpread(evendebtpays, evendgoal, save):
+def EvenSpread(evendebtpays, evendgoal, save, evenevenpayment):
     evenlistdebt = DEBTLIST.copy()
     d = 0
     evenday = DAY
@@ -201,6 +206,9 @@ def EvenSpread(evendebtpays, evendgoal, save):
         # Calculate balance for savings reached day
         if evenday == save:
             balance = sum(evenlistdebt)
+            # If savings is met, contribution is max contribution.
+            evendebtpays = evenevenpayment
+
         for i in range(len(evenlistdebt)):
             if evenlistdebt[i] > 0:
                 evenlistdebt[i] += (evenlistdebt[i] * APRLIST[i] / 100 / 12)  
@@ -284,19 +292,19 @@ if __name__ == '__main__':
             print("Do you need to edit any additional account inputs?")
             edit = input()
 
-    debtgoal, savegoal, savings, dpay, spay = goals()
+    debtgoal, savegoal, savings, dpay, spay, fullpayment = goals()
     
     print("\nDate of achieving debt goal sorted by payoff technique:")
     # Run savings first to calculate remaining debt once savings is reached
     save, stotal = Savings(savegoal, savings, spay)
 
-    max, maxbalance = MaxFirst(dpay, debtgoal, save)
+    max, maxbalance = MaxFirst(dpay, debtgoal, save, fullpayment)
     print("Pay Max Amount First: ", max)
 
-    least, leastbalance = LeastFirst(dpay, debtgoal, save)
+    least, leastbalance = LeastFirst(dpay, debtgoal, save, fullpayment)
     print("Pay Least Amount First: ", least)
     
-    even, evenbalance = EvenSpread(dpay, debtgoal, save)
+    even, evenbalance = EvenSpread(dpay, debtgoal, save, fullpayment)
     print("Pay in Even Spread: ", even)
 
     
