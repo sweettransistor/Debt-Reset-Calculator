@@ -114,6 +114,11 @@ def MaxFirst(maxdebtpays, maxdgoal, save, maxmaxpayment):
                 maxsorted[i] += (maxsorted[i] * aprsorted[i] / 100 / 12)
             else:
                 pass
+
+    # Account for lost monies in balance overpayment at 100% upfront debt payment
+    if sum(maxsorted) < maxdgoal:
+        balance = sum(maxsorted)        
+
     return maxday, balance
         
 # Payoff smallest account balance first strategy        
@@ -162,6 +167,10 @@ def LeastFirst(leastdebtpays, leastdgoal, save, leastleastpayment):
                 minsorted[i] += (minsorted[i] * aprsorted[i] / 100 / 12)
             else:
                 pass
+    # Account for lost monies in balance overpayment at 100% upfront debt payment
+    if sum(minsorted) < leastdgoal:
+        balance = sum(minsorted)        
+
     return leastday, balance
 
 # Payoff in even amounts spread over all accounts
@@ -214,12 +223,22 @@ def EvenSpread(evendebtpays, evendgoal, save, evenevenpayment):
                 evenlistdebt[i] += (evenlistdebt[i] * APRLIST[i] / 100 / 12)  
             else:
                 pass
+
+    # Account for lost monies in balance overpayment at 100% upfront debt payment
+    if sum(evenlistdebt) < evendgoal:
+        balance = sum(evenlistdebt)        
+
     return evenday, balance
 
 # Calculate date savings goal reached
-def Savings(sgoal, savingsstart, savemonthly):
+def Savings(sgoal, savingsstart, savemonthly, saveday):
     savetotal = savingsstart
-    saveday = DAY
+    
+    # If monthly debt contribution starts at 100%
+    if saveday == None:
+        saveday = DAY   
+    else:
+        pass
 
     while (savetotal < sgoal):
         savetotal += savemonthly
@@ -296,26 +315,65 @@ if __name__ == '__main__':
     
     print("\nDate of achieving debt goal sorted by payoff technique:")
     # Run savings first to calculate remaining debt once savings is reached
-    save, stotal = Savings(savegoal, savings, spay)
+    ## if, elif added for 100% debt contribution upfront
+    if spay > 0:
+        save, stotal = Savings(savegoal, savings, spay, None)
 
-    max, maxbalance = MaxFirst(dpay, debtgoal, save, fullpayment)
-    print("Pay Max Amount First: ", max)
+        max, maxbalance = MaxFirst(dpay, debtgoal, save, fullpayment)
+        print("Pay Max Amount First: ", max)
 
-    least, leastbalance = LeastFirst(dpay, debtgoal, save, fullpayment)
-    print("Pay Least Amount First: ", least)
+        least, leastbalance = LeastFirst(dpay, debtgoal, save, fullpayment)
+        print("Pay Least Amount First: ", least)
+        
+        even, evenbalance = EvenSpread(dpay, debtgoal, save, fullpayment)
+        print("Pay in Even Spread: ", even)
+
+        print("\nSavings achieved date: ", save)
     
-    even, evenbalance = EvenSpread(dpay, debtgoal, save, fullpayment)
-    print("Pay in Even Spread: ", even)
+        print("Savings balance: ", stotal) 
+        print("\nOn date savings is reached, the remaining debt for all methods are:\n")
+        print("Pay Max Amount First: ", "{:.2f}".format(maxbalance))
+        print("Pay Least Amount First: ", "{:.2f}".format(leastbalance))
+        print("Pay Even Amount First: ", "{:.2f}".format(evenbalance))
+        input("Press Enter to exit...")
 
-    
-    print("\nSavings achieved date: ", save)
-   
-    print("Savings balance: ", stotal) 
-    print("\nOn date savings is reached, the remaining debt for all methods are:\n")
-    print("Pay Max Amount First: ", "{:.2f}".format(maxbalance))
-    print("Pay Least Amount First: ", "{:.2f}".format(leastbalance))
-    print("Pay Even Amount First: ", "{:.2f}".format(evenbalance))
-    input("Press Enter to exit...")
+    elif spay == 0 :
+        print("\nDebt paid at 100% upfront, goals achieved on the following dates (Negative Debt Balance is added to Savings):")
+
+        max, maxbalance = MaxFirst(dpay, debtgoal, None, fullpayment)
+        print("\nPay Max Amount First: ", max)
+        print("Remaining Debt Balance: ", "{:.2f}".format(maxbalance))
+
+        savemax, stotal = Savings(savegoal, savings-maxbalance, fullpayment, max)
+        print("Savings achieved date: ", savemax)
+        print("Savings balance: ", "{:.2f}".format(stotal)) 
+
+        least, leastbalance = LeastFirst(dpay, debtgoal, None, fullpayment)
+        print("\nPay Least Amount First: ", least)
+        print("Remaining Debt Balance: ", "{:.2f}".format(leastbalance))
+
+        saveleast, stotal = Savings(savegoal, savings-leastbalance, fullpayment, least)
+        print("Savings achieved date: ", saveleast)
+        print("Savings balance: ", "{:.2f}".format(stotal)) 
+
+        even, evenbalance = EvenSpread(dpay, debtgoal, None, fullpayment)
+        print("\nPay in Even Spread: ", even)
+        print("Remaining Debt Balance: ", "{:.2f}".format(evenbalance))
+
+        saveeven, stotal = Savings(savegoal, savings-evenbalance, fullpayment, least)
+        print("Savings achieved date: ", saveeven)
+        print("Savings balance: ", "{:.2f}".format(stotal)) 
+
+        input("Press Enter to exit...")
+
+
+
+
+
+
+
+
+
 
                                                                                              ##                                                                                           
                                                                                            #####                                                                                          
