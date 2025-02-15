@@ -331,8 +331,8 @@ if __name__ == '__main__':
         print("\nSavings achieved date: ", save)
     
         print("Savings balance: ", stotal) 
-        print("\nOn date savings is reached, the remaining debt for all methods are:\n")
-        print("Pay Max Amount First: ", "{:.2f}".format(maxbalance))
+        print("\nOn date savings is reached, the remaining debt for all methods are:")
+        print("\nPay Max Amount First: ", "{:.2f}".format(maxbalance))
         print("Pay Least Amount First: ", "{:.2f}".format(leastbalance))
         print("Pay Even Amount First: ", "{:.2f}".format(evenbalance))
         input("Press Enter to exit...")
@@ -360,7 +360,7 @@ if __name__ == '__main__':
         print("\nPay in Even Spread: ", even)
         print("Remaining Debt Balance: ", "{:.2f}".format(evenbalance))
 
-        saveeven, stotal = Savings(savegoal, savings-evenbalance, fullpayment, least)
+        saveeven, stotal = Savings(savegoal, savings-evenbalance, fullpayment, even)
         print("Savings achieved date: ", saveeven)
         print("Savings balance: ", "{:.2f}".format(stotal)) 
 
