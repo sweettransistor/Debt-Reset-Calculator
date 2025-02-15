@@ -117,9 +117,9 @@ def MaxFirst(maxdebtpays, maxdgoal, save, maxmaxpayment):
 
     # Account for lost monies in balance overpayment at 100% upfront debt payment
     if sum(maxsorted) < maxdgoal:
-        balance = sum(maxsorted)        
+        overbalance = sum(maxsorted)        
 
-    return maxday, balance
+    return maxday, balance, overbalance
         
 # Payoff smallest account balance first strategy        
 def LeastFirst(leastdebtpays, leastdgoal, save, leastleastpayment):
@@ -169,9 +169,9 @@ def LeastFirst(leastdebtpays, leastdgoal, save, leastleastpayment):
                 pass
     # Account for lost monies in balance overpayment at 100% upfront debt payment
     if sum(minsorted) < leastdgoal:
-        balance = sum(minsorted)        
+        overbalance = sum(minsorted)        
 
-    return leastday, balance
+    return leastday, balance, overbalance
 
 # Payoff in even amounts spread over all accounts
 def EvenSpread(evendebtpays, evendgoal, save, evenevenpayment):
@@ -226,9 +226,9 @@ def EvenSpread(evendebtpays, evendgoal, save, evenevenpayment):
 
     # Account for lost monies in balance overpayment at 100% upfront debt payment
     if sum(evenlistdebt) < evendgoal:
-        balance = sum(evenlistdebt)        
+        overbalance = sum(evenlistdebt)        
 
-    return evenday, balance
+    return evenday, balance, overbalance
 
 # Calculate date savings goal reached
 def Savings(sgoal, savingsstart, savemonthly, saveday):
@@ -319,13 +319,13 @@ if __name__ == '__main__':
     if spay > 0:
         save, stotal = Savings(savegoal, savings, spay, None)
 
-        max, maxbalance = MaxFirst(dpay, debtgoal, save, fullpayment)
+        max, maxbalance, maxoverpay = MaxFirst(dpay, debtgoal, save, fullpayment)
         print("Pay Max Amount First: ", max)
 
-        least, leastbalance = LeastFirst(dpay, debtgoal, save, fullpayment)
+        least, leastbalance, leastoverpay  = LeastFirst(dpay, debtgoal, save, fullpayment)
         print("Pay Least Amount First: ", least)
         
-        even, evenbalance = EvenSpread(dpay, debtgoal, save, fullpayment)
+        even, evenbalance, evenoverpay = EvenSpread(dpay, debtgoal, save, fullpayment)
         print("Pay in Even Spread: ", even)
 
         print("\nSavings achieved date: ", save)
@@ -340,25 +340,25 @@ if __name__ == '__main__':
     elif spay == 0 :
         print("\nDebt paid at 100% upfront, goals achieved on the following dates (Negative Debt Balance is added to Savings):")
 
-        max, maxbalance = MaxFirst(dpay, debtgoal, None, fullpayment)
+        max, maxbalance, maxoverpay = MaxFirst(dpay, debtgoal, None, fullpayment)
         print("\nPay Max Amount First: ", max)
-        print("Remaining Debt Balance: ", "{:.2f}".format(maxbalance))
+        print("Remaining Debt Balance: ", "{:.2f}".format(maxoverpay))
 
         savemax, stotal = Savings(savegoal, savings-maxbalance, fullpayment, max)
         print("Savings achieved date: ", savemax)
         print("Savings balance: ", "{:.2f}".format(stotal)) 
 
-        least, leastbalance = LeastFirst(dpay, debtgoal, None, fullpayment)
+        least, leastbalance, leastoverpay = LeastFirst(dpay, debtgoal, None, fullpayment)
         print("\nPay Least Amount First: ", least)
-        print("Remaining Debt Balance: ", "{:.2f}".format(leastbalance))
+        print("Remaining Debt Balance: ", "{:.2f}".format(leastoverpay))
 
         saveleast, stotal = Savings(savegoal, savings-leastbalance, fullpayment, least)
         print("Savings achieved date: ", saveleast)
         print("Savings balance: ", "{:.2f}".format(stotal)) 
 
-        even, evenbalance = EvenSpread(dpay, debtgoal, None, fullpayment)
+        even, evenbalance, evenoverpay = EvenSpread(dpay, debtgoal, None, fullpayment)
         print("\nPay in Even Spread: ", even)
-        print("Remaining Debt Balance: ", "{:.2f}".format(evenbalance))
+        print("Remaining Debt Balance: ", "{:.2f}".format(evenoverpay))
 
         saveeven, stotal = Savings(savegoal, savings-evenbalance, fullpayment, even)
         print("Savings achieved date: ", saveeven)
